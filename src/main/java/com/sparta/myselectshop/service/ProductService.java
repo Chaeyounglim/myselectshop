@@ -5,10 +5,14 @@ import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
 import com.sparta.myselectshop.entity.User;
+import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
-import com.sparta.myselectshop.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,15 +65,22 @@ public class ProductService {
     
 
     // 해당 유저가 관심 상품으로 등록한 목록 출력하는 메서드
-    public List<ProductResponseDto> getProducts(User user) {
-        List<Product> productList = productRepository.findAllByUser(user);
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
+        Sort.Direction direction = isAsc  ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction,sortBy); // 에를 들어서 id 기준으로 내림차순이라면 Sort.by(Sort.Direction.DESC,id);
+        Pageable pageable = PageRequest.of(page,size,sort);
 
-        for (Product product : productList) {
-            responseDtoList.add(new ProductResponseDto(product));
+        UserRoleEnum userRoleEnum = user.getRole();
+
+        Page<Product> productList;
+
+        if(userRoleEnum == UserRoleEnum.USER){
+            productList = productRepository.findAllByUser(user, pageable);
+        } else {
+            productList = productRepository.findAll(pageable);
         }
 
-        return responseDtoList;
+        return productList.map(ProductResponseDto::new);
     }
 
 
@@ -80,14 +91,13 @@ public class ProductService {
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new NullPointerException("해당 상품은 존재하지 않습니다.")
         );
-
         product.updateByItemDto(itemDto);
     }
 
 
 
     // 관리자가 들어왔을 경우에는 모든 상품 데이터 조회가 가능한 메서드
-    public List<ProductResponseDto> getAllProducts() {
+/*    public List<ProductResponseDto> getAllProducts() {
         List<Product> productList = productRepository.findAll();
         List<ProductResponseDto> responseDtoList = new ArrayList<>();
 
@@ -96,5 +106,6 @@ public class ProductService {
         }
 
         return responseDtoList;
-    }
+    }*/
+
 }
