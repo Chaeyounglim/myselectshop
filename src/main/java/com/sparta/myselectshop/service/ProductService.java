@@ -63,7 +63,7 @@ public class ProductService {
 
     
     
-
+    @Transactional(readOnly = true)
     // 해당 유저가 관심 상품으로 등록한 목록 출력하는 메서드
     public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc  ? Sort.Direction.ASC : Sort.Direction.DESC;
