@@ -83,6 +83,7 @@ public class ProductService {
             productList = productRepository.findAll(pageable);
         }
 
+        // page 가 convert 하는 메서드 제공
         return productList.map(ProductResponseDto::new);
     }
 
@@ -97,14 +98,13 @@ public class ProductService {
         product.updateByItemDto(itemDto);
     }
 
+
+    // 상품을 폴더에 추가하는 메서드
     public void addFolder(Long productId, Long folderId, User user) {
-
         // 폴더랑 상품이 해당 DB에 존재하는지 확인
-
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new NullPointerException("해당 상품이 존재하지 않습니다.")
         );
-
         Folder folder = folderRepository.findById(folderId).orElseThrow(
                 () -> new NullPointerException("해당 폴더가 존재하지 않습니다.")
         );
@@ -116,17 +116,28 @@ public class ProductService {
 
         // 같은 폴더에 같은 상품을 중복으로 추가하는지
         Optional<ProductFolder> overlapFolder =  productFolderRepository.findByProductAndFolder(product,folder);
-
-        if(overlapFolder.isPresent()) { // 존재하면
+        if (overlapFolder.isPresent()) { // 존재하면
             throw new IllegalArgumentException("중복된 폴더입니다");
         }
 
         // 드디어 등록할 수 있음.
         productFolderRepository.save(new ProductFolder(product,folder));
+    }// end of addFolder()
 
+
+    public Page<ProductResponseDto> getProductsInFolder(
+            Long folderId, int page, int size, String sortBy, boolean isAsc, User user) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        // 에를 들어서 id 기준으로 내림차순이라면 Sort.by(Sort.Direction.DESC,id);
+        Sort sort = Sort.by(direction,sortBy);
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+
+        // 해당 폴더에 등록된 상품 가져오기
+        Page<Product> productList =
+                productRepository.findAllByUserAndProductFolderList_FolderId(user,folderId,pageable);
+
+        // Dto 타입으로 변환하여 반환함.
+        return productList.map(ProductResponseDto::new);
     }
-
-
-
-
 }
