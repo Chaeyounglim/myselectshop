@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
 @Setter
@@ -37,6 +40,11 @@ public class Product extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductFolder> productFolderList = new ArrayList<>();
+    // 관심상품을 조회할 때 상품이 포함된 폴더들의 정보가 필요. -> 그러므로 상품 폴더와는 양방향 관계임.
+    // 하나의 상품이 여러개의 폴더에 들어갈 수 있음.
 
     public Product(ProductRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
