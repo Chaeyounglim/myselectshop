@@ -41,4 +41,15 @@ public class ProductController {
                 page-1, size, sortBy, isAsc);
     }
 
+    
+    // 관심 상품에 폴더 추가하는 기능
+    @PostMapping("/products/{productId}/folder")
+    public void addFolder(
+            @PathVariable Long productId,
+            @RequestParam Long folderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+            ) {
+        productService.addFolder(productId, folderId, userDetails.getUser());
+    }
+
 }

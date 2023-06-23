@@ -1,6 +1,5 @@
 package com.sparta.myselectshop.dto;
 
-import com.sparta.myselectshop.entity.Folder;
 import com.sparta.myselectshop.entity.Product;
 import com.sparta.myselectshop.entity.ProductFolder;
 import lombok.Getter;
@@ -33,4 +32,5 @@ public class ProductResponseDto {
             productFolderList.add(new FolderResponseDto(productFolder.getFolder()));
         }
     }
+
 }
