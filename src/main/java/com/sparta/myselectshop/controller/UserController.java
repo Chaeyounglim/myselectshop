@@ -1,11 +1,17 @@
 package com.sparta.myselectshop.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.myselectshop.dto.SignupRequestDto;
 import com.sparta.myselectshop.dto.UserInfoDto;
 import com.sparta.myselectshop.entity.UserRoleEnum;
+import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.FolderService;
+import com.sparta.myselectshop.service.KakaoService;
 import com.sparta.myselectshop.service.UserService;
+import io.jsonwebtoken.Jwt;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +32,7 @@ public class UserController {
 
     private final UserService userService;
     private final FolderService folderService;
+    private final KakaoService kakaoService;
 
     @GetMapping("/user/login-page")
     public String loginPage() {
@@ -69,5 +76,18 @@ public class UserController {
         model.addAttribute("folders",folderService.getFolders(userDetails.getUser()));
         return "index :: #fragment";
     }
+
+    // 카카오 서버에서 보내주는 코드를 @RequestParam 으로 받을 예정입니다.
+    @GetMapping("/user/kakao/callback")
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        String token = kakaoService.kakaoLogin(code); // 반환 값이 JWT 토큰
+
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER,token.substring(7));
+        cookie.setPath("/" );
+        response.addCookie(cookie);
+
+        return "redirect:/";
+    }
+
 
 }
