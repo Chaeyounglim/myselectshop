@@ -11,6 +11,7 @@ import com.sparta.myselectshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -103,14 +104,18 @@ public class KakaoService {
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
                 .headers(headers)
                 .body(new LinkedMultiValueMap<>());
 
+        RequestEntity<String> requestEntity1 = new RequestEntity<>(headers, HttpMethod.GET,uri);
+
+
         // HTTP 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(
-                requestEntity,
+                requestEntity1,
                 String.class
         );
 
