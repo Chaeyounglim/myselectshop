@@ -1,9 +1,11 @@
+/*
 package com.sparta.myselectshop.aop;
 
 import com.sparta.myselectshop.entity.ApiUseTime;
 import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.repository.ApiUseTimeRepository;
 import com.sparta.myselectshop.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -16,13 +18,10 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "UseTimeAop")
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class UseTimeAop {
 
     private final ApiUseTimeRepository apiUseTimeRepository;
-
-    public UseTimeAop(ApiUseTimeRepository apiUseTimeRepository) {
-        this.apiUseTimeRepository = apiUseTimeRepository;
-    }
 
     @Pointcut("execution(* com.sparta.myselectshop.controller.ProductController.*(..))")
     private void product() {}
@@ -68,4 +67,4 @@ public class UseTimeAop {
             }
         }
     }
-}
+}*/
