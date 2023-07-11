@@ -22,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j(topic = "KAKAO Login")
@@ -105,17 +107,27 @@ public class KakaoService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 
+        // Http 요청 보내기
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
                 .headers(headers)
                 .body(new LinkedMultiValueMap<>());
+        // 키 값이 중복되는 것을 허용하기 위해서 MultiValueMap 중복 키값을 허용하는 스프링 내부 인터페이스이므로
+        // 외부 API 로 부터 Json 데이터를 보낼 때?
 
-        RequestEntity<String> requestEntity1 = new RequestEntity<>(headers, HttpMethod.GET,uri);
+        /* 1.  아래와 같이 써도 됨.
+        RequestEntity<Map<String, String>> requestEntity2 = RequestEntity
+                .post(uri)
+                .headers(headers)
+                .body(new HashMap<>());*/
+        // 상태 변화 -> post 보안상의 이유로 login 은 post 방식. (password 입력 필요한 경우)
 
+        // 2. GET 방식
+        //RequestEntity<String> requestEntity = new RequestEntity<>(headers, HttpMethod.GET,uri);
 
         // HTTP 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(
-                requestEntity1,
+                requestEntity,
                 String.class
         );
 
