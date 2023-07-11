@@ -17,4 +17,23 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler({NullPointerException.class})
+    public ResponseEntity<RestApiException> nullPointerExceptionHandler(NullPointerException ex) {
+        RestApiException restApiException = new RestApiException(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(
+                restApiException,
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler({ProductNotFoundException.class})
+    public ResponseEntity<RestApiException> notFoundProductExceptionHandler(ProductNotFoundException ex) {
+        RestApiException restApiException = new RestApiException(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(
+                restApiException,
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+
 }
