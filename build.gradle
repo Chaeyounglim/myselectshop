@@ -22,6 +22,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.github.kristofa:brave-spring-web-servlet-interceptor:3.7.0'
+    implementation 'com.github.kristofa:brave-spring-web-servlet-interceptor:3.7.0'
+
     // JWT
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
